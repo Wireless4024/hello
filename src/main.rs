@@ -1,4 +1,3 @@
-
 use std::collections::HashMap;
 use std::error::Error;
 use std::time::{Duration, Instant};
@@ -21,6 +20,8 @@ static mut COUNTS: usize = 1_000_000;
 static mut USE_H2: bool = false;
 /// url to fake page
 static mut HOST: &str = "";
+/// url for referer (will skip parse_site and use HOST as target)
+static mut DIRECT_HOST: &str = "";
 
 /// Change this function to edit body on each request
 fn transform_body(mut h: HashMap<&'static str, String>) -> HashMap<&'static str, String> {
@@ -95,8 +96,20 @@ fn init() {
 		}
 		let site = site.unwrap();
 		println!("Using config: {:#?}", site);
-		let url: &'static mut str = Box::leak(site.url.into_boxed_str());
-		let referer = site.referer;
+		let url: &'static str = {
+			if !unsafe { DIRECT_HOST }.is_empty() {
+				unsafe { HOST }
+			} else {
+				Box::leak(site.url.into_boxed_str())
+			}
+		};
+		let referer = {
+			if !unsafe { DIRECT_HOST }.is_empty() {
+				unsafe { DIRECT_HOST }
+			} else {
+				site.referer
+			}
+		};
 		let fut = FuturesUnordered::new();
 		let mut runtimes = Vec::with_capacity(parallel);
 		for _ in 0..parallel {
