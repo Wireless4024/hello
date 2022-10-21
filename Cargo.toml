@@ -1,0 +1,20 @@
+[package]
+name = "hello"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1", features = [ "rt-multi-thread"] }
+rand = "0.8.5"
+bstr = "1"
+reqwest = { version = "0", features = ["rustls-tls"] }
+futures = "0.3"
+
+[profile.release]
+opt-level = 3
+panic = "abort"
+lto = "thin"
+debug = false
+strip = true
