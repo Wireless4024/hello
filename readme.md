@@ -21,7 +21,9 @@ This project designed to send huge amount of dynamic payload to http endpoint.
 ## Run this project
 ```shell
 git clone https://github.com/Wireless4024/hello
+cargo run --release
 ```
+> You can adjust value in main.rs to whatever you want
 
 # TLDR;
 
